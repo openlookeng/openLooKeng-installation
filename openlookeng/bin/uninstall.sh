@@ -45,7 +45,7 @@ function main()
         PASSLESS_NODES=$ALL_NODES
     fi
     IFS=',' read -ra host_array <<< "${PASSLESS_NODES}"
-    if [[ -z $CLUSTER_PASS ]]
+    if [[ -z $CLUSTER_PASS ]] && [[ ${host_array} != "localhost" ]]
     then
         ask_passwd
     fi
