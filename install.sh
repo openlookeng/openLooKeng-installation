@@ -336,7 +336,7 @@ function create_user()
             continue
         else
             . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh /opt
-            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash /opt/hetu_adduser.sh;rm -rf /opt/hetu_adduser.sh"
+            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash /opt/hetu_adduser.sh;"
         fi
     done
     

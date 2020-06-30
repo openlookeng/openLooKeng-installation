@@ -27,7 +27,13 @@
 declare FILE_NAME="install_java.sh"
 
 #################################################### log print #################################################
-
+res=`arch|grep x86|wc -l`
+if [[  $res > 0 ]]
+then
+    architecture=x86
+else
+    architecture=arrch64
+fi
 function install_jdk()
 {
     offline=$1
@@ -80,9 +86,12 @@ function install_jdk()
 function main()
 {    
     offline=$1
+    resource_url=$2
     source /home/openlkadmin/`ls -a /home/openlkadmin/|grep profile`
+    java -version &> /dev/null
+    ret=$?
     java_version=`java -version 2>&1 |awk 'NR==1{ gsub(/"/,""); print $3 }'`
-    if [[ -z ${java_version} ]]
+    if [[ $ret != 0 ]]
     then
         echo "[INFO] JDK is not installed, need install auto, java_version is:${java_version}, sub_version is: ${sub_version}"
         install_jdk $offline||{ ret=$?; return ${ret}; }
