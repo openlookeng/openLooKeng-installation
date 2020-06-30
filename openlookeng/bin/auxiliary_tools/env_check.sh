@@ -86,10 +86,10 @@ function java_check(){
         echo "[INFO] Check jdk installation on $ip..."
         if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
         then
-            bash $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh $offline
+            bash $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh $offline $resource_url
         else
             . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh /opt
-            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash /opt/install_java.sh $offline;rm -f /opt/install_java.sh;exit"
+            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash /opt/install_java.sh $offline $resource_url;rm -f /opt/install_java.sh;exit"
         fi
     done
 }

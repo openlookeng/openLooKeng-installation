@@ -91,7 +91,7 @@ function install_server()
             cd - &> /dev/null
         else
             . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OEPNLKADMIN_PATH/hetu-server-$openlk_version.tar.gz /opt
-            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "rm -rf $INSTALL_PATH;mkdir -p $INSTALL_PATH;tar -zxvf /opt/hetu-server-$openlk_version.tar.gz -C $INSTALL_PATH;rm -rf /opt/hetu-server-$openlk_version.tar.gz;cd $INSTALL_PATH;ln -s $INSTALL_PATH/hetu-server-$openlk_version hetu-server;cd -" &> /dev/null
+            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "mkdir -p $INSTALL_PATH;tar -zxvf /opt/hetu-server-$openlk_version.tar.gz -C $INSTALL_PATH;rm -rf /opt/hetu-server-$openlk_version.tar.gz;cd $INSTALL_PATH;ln -s $INSTALL_PATH/hetu-server-$openlk_version hetu-server;cd -" &> /dev/null
         fi
     done
 
