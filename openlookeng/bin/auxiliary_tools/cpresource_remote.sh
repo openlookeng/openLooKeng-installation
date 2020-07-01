@@ -22,13 +22,13 @@ function cpresource_remotenode(){
         whoami=`whoami`
         if [[ $whoami == "openlkadmin" ]]
         then
-            scp -r ${full_path} openlkadmin@$node_ip:$target_path &> /dev/null
+            scp -o StrictHostKeyChecking=no -r ${full_path} openlkadmin@$node_ip:$target_path &> /dev/null
         else
-            su openlkadmin -c "scp -r ${full_path} openlkadmin@$node_ip:$target_path" &> /dev/null
+            su openlkadmin -c "scp -o StrictHostKeyChecking=no -r ${full_path} openlkadmin@$node_ip:$target_path" &> /dev/null
         fi
     else
         #scp
-        sshpass -p $CLUSTER_PASS scp -r $full_path $node_ip:$target_path &> /dev/null
+        sshpass -p $CLUSTER_PASS scp -o StrictHostKeyChecking=no -r $full_path $node_ip:$target_path &> /dev/null
     fi
 }
 cpresource_remotenode $@
