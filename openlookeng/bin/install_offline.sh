@@ -258,7 +258,7 @@ function change_user()
 function install_server()
 {
     chmod u+x $OPENLOOKENG_BIN_THIRD_PATH/server_install.sh
-    . $OPENLOOKENG_BIN_THIRD_PATH/server_install.sh
+    . $OPENLOOKENG_BIN_THIRD_PATH/server_install.sh offline
 }
 function create_user()
 {
@@ -282,7 +282,7 @@ function create_user()
 
 }
 function java_check(){
-    . $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --java
+    . $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --java offline
 }
 function memory_check()
 {
@@ -295,13 +295,13 @@ function check_node_reacheable(){
 
 function env_check()
 {
-    . $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --sshpass
+    . $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --sshpass offline
     if [[ $? != 0 ]]
     then
         exit 1
     fi
 
-    . $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --cli
+    . $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --cli offline
     if [[ $? != 0 ]]
     then
         exit 1

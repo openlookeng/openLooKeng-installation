@@ -32,7 +32,7 @@ if [[  $res > 0 ]]
 then
     architecture=x86
 else
-    architecture=arrch64
+    architecture=aarch64
 fi
 function install_jdk()
 {
@@ -51,20 +51,25 @@ function install_jdk()
             #wget -P /opt $1 &> /dev/null
             curl -fsSL -o /opt/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz $resource_url/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz
         fi 
-        tar -zxvf /opt/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz -C /opt/ >>/dev/null 2>&1
+        #tar -zxvf /opt/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz -C /opt/ >>/dev/null 2>&1
     else
-        if [[ ! -f $OPENLOOKENG_DEPENDENCIES_PATH/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz ]]
+        if [[ -f $OPENLOOKENG_DEPENDENCIES_PATH/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz ]]
         then
-            echo "[ERROR] $OPENLOOKENG_DEPENDENCIES_PATH/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz doesn't exit."
-            return 1
+            cp $OPENLOOKENG_DEPENDENCIES_PATH/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz /opt
+        else
+            if [[ ! -f /opt/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz ]]
+            then
+                echo "[ERROR] OpenJDK package doesn't exit."
+                exit 1
+            fi
         fi
-        cp $OPENLOOKENG_DEPENDENCIES_PATH/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz /opt
+
     fi    
-    
+    tar -zxvf /opt/OpenJDK8U-jdk_${arch_name}_linux_hotspot_8u222b10.tar.gz -C /opt/ >>/dev/null 2>&1
     if [ $? -ne 0 ]
     then
         echo "[INFO] JDK installation failed"
-        exit -1
+        exit 1
     else
         sed -i '#*/opt/jdk#d' /home/openlkadmin/`ls -a /home/openlkadmin/|grep profile`
         sed -i '/root\/bin/d' /home/openlkadmin/`ls -a /home/openlkadmin/|grep profile`
@@ -73,7 +78,7 @@ function install_jdk()
         
         sed -i '$aJAVA_HOME=/opt/jdk8u222-b10' /home/openlkadmin/`ls -a /home/openlkadmin/|grep profile`
         sed -i '$aPATH=/opt/jdk8u222-b10/bin:$PATH:$HOME/bin' /home/openlkadmin/`ls -a /home/openlkadmin/|grep profile`
-        sed -i '$aCLASSPATH=.:/opt/jdk8u222-b10jdk8u222-b10/lib/dt.jar:/opt/jdk8u222-b10/lib/tools.jar' /home/openlkadmin/`ls -a /home/openlkadmin/|grep profile`
+        sed -i '$aCLASSPATH=.:/opt/jdk8u222-b10/lib/dt.jar:/opt/jdk8u222-b10/lib/tools.jar' /home/openlkadmin/`ls -a /home/openlkadmin/|grep profile`
         sed -i '$aexport PATH JAVA_HOME CLASSPATH' /home/openlkadmin/`ls -a /home/openlkadmin/|grep profile`
 
         source /home/openlkadmin/`ls -a /home/openlkadmin/|grep profile`

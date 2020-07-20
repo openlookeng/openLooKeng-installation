@@ -15,16 +15,14 @@
 #!/bin/bash
 function install_server()
 {
-    curl -IL $wget_url &> /dev/null
-    offline=$?
+    offline=$1
     if [[ ! -d $OEPNLKADMIN_PATH ]]
     then
         mkdir -p $OEPNLKADMIN_PATH
         chown -R openlkadmin:openlkadmin $OEPNLKADMIN_PATH
     fi
-    if [[ $offline == 0 ]]
+    if [[ -z $offline ]]
     then
-
         echo "curl -fsSL -o $OEPNLKADMIN_PATH/hetu-server-$openlk_version.tar.gz.sha256sum $wget_url/$openlk_version/hetu-server-$openlk_version.tar.gz.sha256sum"
         curl -fsSL -o $OEPNLKADMIN_PATH/hetu-server-$openlk_version.tar.gz.sha256sum $wget_url/$openlk_version/hetu-server-$openlk_version.tar.gz.sha256sum
         if [[ ! -f $OEPNLKADMIN_PATH/hetu-server-$openlk_version.tar.gz ]]

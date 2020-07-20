@@ -19,14 +19,14 @@ if [[  $res > 0 ]]
 then
     architecture=x86
 else
-    architecture=arrch64
+    architecture=aarch64
 fi
 export resource_url=$wget_url/auto-install/third-resource/$architecture
 export architecture
 function check_sshpass()
 {
-    curl -IL $wget_url &> /dev/null
-    offline=$?
+    curl --max-time 10 -IL $wget_url &> /dev/null
+    offline=$1
     echo "[INFO] Checking sshpass installation..."
     ret_str=`sshpass |awk -F':' '{print $1}' |sed -n '1p'`
     if [[ "${ret_str}" == "Usage" ]]
@@ -35,50 +35,69 @@ function check_sshpass()
         return 0
     fi
     echo "[INFO] Sshpass is not installed. Start to install it right now..."
-    if [[ $offline == 0 ]]
+    if [[ -z $offline ]]
     then
         curl -fsSL -o /opt/sshpass-1.06.tar.gz $resource_url/sshpass-1.06.tar.gz
-        curl -fsSL -o /opt/sshpass-1.06-2.el7.x86_64.rpm $resource_url/sshpass-1.06-2.el7.x86_64.rpm
+        if [[ $architecture == "x86" ]]
+        then
+            curl -fsSL -o /opt/sshpass-1.06-2.el7.x86_64.rpm $resource_url/sshpass-1.06-2.el7.x86_64.rpm
+        else
+            curl -fsSL -o /opt/sshpass-1.06-2.el7.x86_64.rpm $resource_url/sshpass-1.06-1.el7.aarch64.rpm
+        fi
     else
         if [[ ! -f $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06.tar.gz ]]
         then
             echo "[ERROR] $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06.tar.gz doesn't exit."
             return 1
         fi
-        if [[ ! -f $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06.tar.gz ]]
+        if [[ $architecture == "x86" ]] && [[ ! -f $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-2.el7.x86_64.rpm ]]
         then
             echo "[ERROR] $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-2.el7.x86_64.rpm doesn't exit."
             return 1
         fi
-        cp $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-2.el7.x86_64.rpm /opt
-        cp $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-2.el7.x86_64.rpm /opt
+        if [[ $architecture != "x86" ]] && [[ ! -f $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-1.el7.aarch64.rpm ]]
+        then
+            echo "[ERROR] $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-1.el7.aarch64.rpm doesn't exit."
+            return 1
+        fi
+        cp $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06.tar.gz /opt
+        if [[ $architecture == "x86" ]]
+        then
+            cp $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-2.el7.x86_64.rpm /opt
+        else
+            cp $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-1.el7.aarch64.rpm /opt
+        fi
     fi
     gcc_str=`gcc -v 2>&1 |awk 'NR==1{ gsub(/"/,""); print $1 }'`
-    if [[ "${gcc_str}" == "Using" ]] || [[ ! -f /opt/sshpass-1.06-2.el7.x86_64.rpm ]]
+    if [[ "${gcc_str}" == "Using" ]]
     then
-        tar -zxvf /opt/sshpass-1.06.tar.gz>/dev/null 2>&1
+        tar -zxvf /opt/sshpass-1.06.tar.gz -C /opt>/dev/null 2>&1
         cd /opt/sshpass-1.06 >/dev/null 2>&1
         ./configure >/dev/null 2>&1
         make >/dev/null 2>&1
         make install >/dev/null 2>&1
         cd - >/dev/null 2>&1
     else
-        rpm -ivh /opt/sshpass-1.06-2.el7.x86_64.rpm >/dev/null 2>&1
+        if [[ $architecture == "x86" ]]
+        then
+            rpm -ivh /opt/sshpass-1.06-2.el7.x86_64.rpm >/dev/null 2>&1
+        else
+            rpm -ivh /opt/sshpass-1.06-1.el7.aarch64.rpm >/dev/null 2>&1
+        fi
     fi
     ret_str=`sshpass |awk -F':' '{print $1}' |sed -n '1p'`
     if [[ "${ret_str}" == "Usage" ]]
     then
-        echo  "[INFO] sshpass install successed"
+        echo  "[INFO] sshpass install successed."
     else
-        echo "[ERROR] sshpass install failed"
+        echo "[ERROR] sshpass install failed."
         return 1
     fi
 
 }
 
-function java_check(){
-    curl -IL $wget_url &> /dev/null
-    offline=$?
+function java_install_check(){
+    offline=$1
 
     IFS=',' read -ra host_array <<< "${PASSLESS_NODES}"
     for ip in ${host_array[@]}
@@ -89,6 +108,10 @@ function java_check(){
             bash $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh $offline $resource_url
         else
             . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh /opt
+            if [[ ! -z $offline ]]
+            then
+                . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_DEPENDENCIES_PATH/OpenJDK8U-jdk* /opt
+            fi
             . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash /opt/install_java.sh $offline $resource_url;rm -f /opt/install_java.sh;exit"
         fi
     done
@@ -123,13 +146,12 @@ function check_node_reacheable()
 }
 function download_cli()
 {
-    curl -IL $wget_url &> /dev/null
-    offline=$?
+    offline=$1
     if [[ ! -d $OPENLOOKENG_DEPENDENCIES_PATH ]]
     then
         mkdir -p $OPENLOOKENG_DEPENDENCIES_PATH
     fi
-    if [[ $offline == 0 ]]
+    if [[ -z $offline ]]
     then
         curl -fsSL -o $OPENLOOKENG_DEPENDENCIES_PATH/hetu-cli-$openlk_version-executable.jar $wget_url/$openlk_version/hetu-cli-$openlk_version-executable.jar
         if [[ $? == 0 ]]
@@ -155,12 +177,12 @@ function main()
     offline=$2
     if [[ $1 =~ "sshpass" ]]
     then
-        check_sshpass
+        check_sshpass $offline
         return $?
     fi
     if [[ $1 =~ "java" ]]
     then
-        java_check
+        java_install_check $offline
         return $?
     fi
     if [[ $1 =~ "memory" ]]
@@ -176,7 +198,7 @@ function main()
 
     if [[ $1 =~ "cli" ]]
     then
-        download_cli
+        download_cli $offline
         return $?
     fi
 }

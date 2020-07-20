@@ -99,6 +99,11 @@ function init_config_template()
         else
             CN_as_WORKER=true
         fi
+        IFS=',' read -ra nodes_for_count <<< "$ALL_NODES"
+        if [[ ${#nodes_for_count[@]} == 1 ]]
+        then
+            CN_as_WORKER=true
+        fi
         cluster_config_info="jvm_memory=$JVM_MEM\nnode-scheduler.include-coordinator=$CN_as_WORKER\nhttp-server.http.port=8090\nexchange.client-threads=${EXCHANGE_CLIENT_THREADS}\ntask.max-worker-threads=${MAX_WORKER_THREADS}\nquery.max-memory=${MAX_MEM}GB\nquery.max-total-memory=${MAX_TOTAL_MEM}GB\nquery.max-memory-per-node=${MAX_MEM_PER_NODE}GB\nquery.max-total-memory-per-node=${MAX_TOTAL_MEM_PER_NODE}GB\nexperimental.spill-enabled=false\nexperimental.spiller-spill-path=${INSTALL_PATH}/sqlengine_path\nmemory.heap-headroom-per-node=${HEAP_HEADRM}GB\ntask.concurrency=${TASK_CONCURRENCY}\nnode-scheduler.max-splits-per-node=200\nnode-scheduler.max-pending-splits-per-task=20\nexperimental.reserved-pool-enabled=false\nquery.low-memory-killer.policy=total-reservation-on-blocked-nodes\nexperimental.max-spill-per-node=${DEFAULT_MAX_SPLITS_PER_NODE_VALUE}GB\nexperimental.query-max-spill-per-node=${DEFAULT_MAX_PENDING_SPLITS_PER_TASK_VALUE}GB"
         touch $OEPNLKADMIN_PATH/cluster_config_info
         echo -e $cluster_config_info > $OEPNLKADMIN_PATH/cluster_config_info

@@ -36,7 +36,7 @@ function print_help()
                         nodes need to add.
 EOF
 }
-GETOPT_ARGS=`getopt -o :f:n:h -al :file:,nodes:,help -- "$@"`
+GETOPT_ARGS=`getopt -o :f:n:h -al file:,nodes:,help -- "$@"`
 eval set -- "$GETOPT_ARGS"
 function create_user()
 {
