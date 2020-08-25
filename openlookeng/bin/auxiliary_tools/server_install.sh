@@ -40,7 +40,7 @@ function install_server()
         res=$(sha256sum -c hetu-server-$openlk_version.tar.gz.sha256sum|grep OK|wc -l)
         if [[ $res > 0 ]]
         then
-            echo "[INFO] Integrity verification of openLooKeng install package successed."
+            echo "[INFO] Integrity verification of openLooKeng install package succeeded."
             rm -rf hetu-server-$openlk_version.tar.gz.sha256sum
         else
             echo "[INFO] OpenLooKeng server package is not latest. Downloading it again now..."
@@ -53,7 +53,7 @@ function install_server()
             res=$(sha256sum -c hetu-server-$openlk_version.tar.gz.sha256sum|grep OK|wc -l)
             if [[ $res > 0 ]]
             then
-                echo "[INFO] Integrity verification of openLooKeng install package successed."
+                echo "[INFO] Integrity verification of openLooKeng install package succeeded."
                 rm -rf hetu-server-$openlk_version.tar.gz.sha256sum
             else
                 echo "[ERROR] Integrity verification of openLooKeng install package failed. Exit now ..."

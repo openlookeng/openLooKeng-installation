@@ -21,6 +21,7 @@ then
 else
     architecture=aarch64
 fi
+export resource_url_base=$wget_url/auto-install/third-resource
 export resource_url=$wget_url/auto-install/third-resource/$architecture
 export architecture
 function check_sshpass()
@@ -47,17 +48,17 @@ function check_sshpass()
     else
         if [[ ! -f $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06.tar.gz ]]
         then
-            echo "[ERROR] $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06.tar.gz doesn't exit."
+            echo "[ERROR] $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06.tar.gz doesn't exist."
             return 1
         fi
         if [[ $architecture == "x86" ]] && [[ ! -f $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-2.el7.x86_64.rpm ]]
         then
-            echo "[ERROR] $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-2.el7.x86_64.rpm doesn't exit."
+            echo "[ERROR] $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-2.el7.x86_64.rpm doesn't exist."
             return 1
         fi
         if [[ $architecture != "x86" ]] && [[ ! -f $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-1.el7.aarch64.rpm ]]
         then
-            echo "[ERROR] $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-1.el7.aarch64.rpm doesn't exit."
+            echo "[ERROR] $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06-1.el7.aarch64.rpm doesn't exist."
             return 1
         fi
         cp $OPENLOOKENG_DEPENDENCIES_PATH/sshpass-1.06.tar.gz /opt
@@ -88,7 +89,7 @@ function check_sshpass()
     ret_str=`sshpass |awk -F':' '{print $1}' |sed -n '1p'`
     if [[ "${ret_str}" == "Usage" ]]
     then
-        echo  "[INFO] sshpass install successed."
+        echo  "[INFO] sshpass install succeeded."
     else
         echo "[ERROR] sshpass install failed."
         return 1
@@ -105,14 +106,14 @@ function java_install_check(){
         echo "[INFO] Check jdk installation on $ip..."
         if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
         then
-            bash $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh $offline $resource_url
+            bash $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh $offline $resource_url_base
         else
             . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh /opt
             if [[ ! -z $offline ]]
             then
                 . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_DEPENDENCIES_PATH/OpenJDK8U-jdk* /opt
             fi
-            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash /opt/install_java.sh $offline $resource_url;rm -f /opt/install_java.sh;exit"
+            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash /opt/install_java.sh $offline $resource_url_base; rm -f /opt/install_java.sh;exit"
         fi
     done
 }
