@@ -109,9 +109,15 @@ function java_install_check(){
             bash $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh $offline $resource_url_base
         else
             . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh /opt
+            remote_arch=$(. $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip 'res=`arch|grep x86|wc -l`; if [[  $res > 0 ]]; then echo x86; else echo aarch64; fi')
             if [[ ! -z $offline ]]
             then
-                . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_DEPENDENCIES_PATH/OpenJDK8U-jdk* /opt
+                if [[ $remote_arch == $architecture ]]
+                then
+                    . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_DEPENDENCIES_PATH/OpenJDK8U-jdk* /opt
+                else
+                    . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_DEPENDENCIES_PATH/$remote_arch/OpenJDK8U-jdk* /opt
+                fi
             fi
             . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash /opt/install_java.sh $offline $resource_url_base; rm -f /opt/install_java.sh;exit"
         fi
