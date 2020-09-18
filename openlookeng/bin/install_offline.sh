@@ -14,7 +14,8 @@
  ##
 #!/bin/bash
 export wget_url=https://download.openlookeng.io
-declare openlk_version="010"
+declare openlk_version=
+declare version_arr=
 declare package_name=openlookeng.tar.gz
 declare install_path=/opt/openlookeng
 declare DEFAULT_MAX_SPLITS_PER_NODE_VALUE=100
@@ -55,10 +56,8 @@ EOF
 }
 
 function print_versions(){
-        cat <<EOF
-* openLooKeng versions:
-        010
-EOF
+    echo "* openLooKeng versions:"
+    echo "    ${version_arr[*]}"
 }
 function check_status()
 {
@@ -371,7 +370,15 @@ function check_file()
     #exit 1
 }
 
-version_arr=(010)
+function read_versions()
+{
+    # TODO: Discover downloaded version(s)
+    read -d '' -r -a version_arr < $install_path/versions
+    if [[ -z $openlk_version ]]
+    then
+        openlk_version=${version_arr[0]}
+    fi
+}
 
 function check_version()
 {
@@ -425,6 +432,7 @@ function main()
                 esac
     done
 
+    read_versions
     check_version $openlk_version
         if [[ $? != 0 ]]
         then

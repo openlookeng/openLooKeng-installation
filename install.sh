@@ -14,7 +14,8 @@
  ##
 #!/bin/bash
 export wget_url=https://download.openlookeng.io
-declare openlk_version="010"
+declare openlk_version=
+declare version_arr=
 declare package_name=openlookeng.tar.gz
 declare install_path=/opt/openlookeng
 declare DEFAULT_MAX_SPLITS_PER_NODE_VALUE=100
@@ -34,7 +35,7 @@ function print_help(){
          NAME
                 install.sh - Automatically install the specified version of openLooKeng.
          USAGE
-                bash install.sh [options [value]] 
+                bash install.sh [options [value]]
 
          OPTIONS
                 -i <version_name>,--version <version_name>
@@ -53,18 +54,15 @@ function print_help(){
                         cluster node specific configuration file.
 EOF
 }
-version_arr=(010)
 function print_versions(){
-        cat <<EOF
-* openLooKeng versions:
-        010
-EOF
+    echo "* openLooKeng versions:"
+    echo "    ${version_arr[*]}"
 }
 function check_status()
 {
-    #check_serverstatus    
+    #check_serverstatus
     IFS=',' read -ra host_array <<< "${ALL_NODES}"
-    
+
     for ip in "${host_array[@]}"
     do
         if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
@@ -73,7 +71,7 @@ function check_status()
             then
                 pcount=0
             else
-                pcount=`ps -ef|grep HetuServer|grep "$INSTALL_PATH/hetu-server"|grep -v grep|wc -l`            
+                pcount=`ps -ef|grep HetuServer|grep "$INSTALL_PATH/hetu-server"|grep -v grep|wc -l`
             fi
         else
             if [[ ! -z $CLUSTER_PASS ]]
@@ -97,7 +95,7 @@ function check_status()
             if [[ -z $RESPONSE ]] || [[ $RESPONSE == "y" ]] || [[ $RESPONSE == "yes" ]]
             then
                 if [[ $UPGRADE == true ]]
-                then  
+                then
                 #bakup etc and catalog
                     bakup
                     if [[ $? != 0 ]]
@@ -106,7 +104,7 @@ function check_status()
                     fi
                 fi
                 bash $OPENLOOKENG_BIN_PATH/uninstall.sh --serveronly
-                break 
+                break
             elif [[ $RESPONSE == "n" ]] || [[ $RESPONSE == "no" ]]
             then
                 echo "[INFO] Exiting now..."
@@ -120,12 +118,12 @@ function check_status()
         #check_installation
         check_installation
     fi
-    
+
 }
 function check_installation()
 {
     IFS=',' read -ra host_array <<< "${ALL_NODES}"
-    
+
     for ip in "${host_array[@]}"
     do
         if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
@@ -134,8 +132,8 @@ function check_installation()
             then
                 pcount=0;
             else
-                pcount=`ls $INSTALL_PATH|grep hetu-server|grep -v grep|wc -l`   
-            fi                         
+                pcount=`ls $INSTALL_PATH|grep hetu-server|grep -v grep|wc -l`
+            fi
         else
             su openlkadmin &>/dev/null <<EOF
         ssh -o StrictHostKeyChecking=no openlkadmin@$ip "ls $INSTALL_PATH"
@@ -150,7 +148,7 @@ EOF
                 fi
             else
                 pcount=0
-            fi               
+            fi
         fi
         if [[ $pcount > 0 ]]
         then
@@ -167,7 +165,7 @@ EOF
                 if [[ -z $RESPONSE ]] || [[ $RESPONSE == "y" ]] || [[ $RESPONSE == "yes" ]]
                 then
                     if [[ $UPGRADE == true ]]
-                    then  
+                    then
                 #bakup etc and catalog
                         bakup
                         if [[ $? != 0 ]]
@@ -176,7 +174,7 @@ EOF
                         fi
                     fi
                     bash $OPENLOOKENG_BIN_PATH/uninstall.sh --serveronly
-                    break 
+                    break
                 elif [[ $RESPONSE == "n" ]] || [[ $RESPONSE == "no" ]]
                 then
                     echo "[INFO] Exiting now..."
@@ -187,7 +185,7 @@ EOF
                 fi
             done
         fi
-    
+
 }
 function check_serverstatus()
 {
@@ -281,7 +279,7 @@ function install()
         return 1
     fi
     #install openLooKeng server
-    install_server 
+    install_server
     if [[ $? != 0 ]]
     then
         return 1
@@ -290,12 +288,12 @@ function install()
     chmod u+x $OPENLOOKENG_BIN_THIRD_PATH/config_handle.sh
     export ISINSTALL=true
     . $OPENLOOKENG_BIN_THIRD_PATH/config_handle.sh
-    
+
     change_user
 }
 function SshWithoutAuth(){
     chmod u+x $OPENLOOKENG_BIN_THIRD_PATH/passwordless.sh
-    
+
     . $OPENLOOKENG_BIN_THIRD_PATH/passwordless.sh
 }
 
@@ -339,7 +337,7 @@ function create_user()
             . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash /opt/hetu_adduser.sh;rm -rf /opt/hetu_adduser.sh;exit"
         fi
     done
-    
+
 }
 function java_check(){
     bash $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --java
@@ -424,6 +422,16 @@ function check_file()
     #exit 1
 }
 
+function read_versions()
+{
+    # TODO: Discover version(s) from download site
+    read -d '' -r -a version_arr < $install_path/versions
+    if [[ -z $openlk_version ]]
+    then
+        openlk_version=${version_arr[0]}
+    fi
+}
+
 function check_version()
 {
     version="$1"
@@ -444,22 +452,22 @@ function main()
     while [ -n "$1" ]
     do
         case "$1" in
-                -h|--help) 
+                -h|--help)
                         print_help
                         exit 0;;
-                -l|--list) 
+                -l|--list)
                         print_versions
                         exit 0;;
-                -i|--version) 
+                -i|--version)
                         openlk_version="$2"
                         shift 2;;
-                -m|--multi-node) 
-                        ISSINGLE=false 
+                -m|--multi-node)
+                        ISSINGLE=false
                         #echo "not support now"
                         #exit 1
                         shift ;;
-                -s|--single-node) 
-                        ISSINGLE=true 
+                -s|--single-node)
+                        ISSINGLE=true
                         shift ;;
                 -u|--upgrade)
                         ISSINGLE=false
@@ -476,28 +484,28 @@ function main()
                 esac
     done
 
-    check_version $openlk_version
-        if [[ $? != 0 ]]
-        then
-                echo "[ERROR] Incorrect version."
-                print_versions
-                exit 1
-        fi
     cd `pwd`
-    
-    if [[ $UPGRADE == false ]]
+
+    download
+    if [[ $? != 0 ]]
     then
-        download
-        if [[ $? != 0 ]]
-        then
-            exit 1
-        fi
-        #clear_local
-        verify_unpack
+        exit 1
     fi
+    #clear_local
+    verify_unpack
+
+    read_versions
+    check_version $openlk_version
+    if [[ $? != 0 ]]
+    then
+        echo "[ERROR] Incorrect version."
+        print_versions
+        exit 1
+    fi
+
     #3.source pathfile
     source $install_path/bin/auxiliary_tools/pathfile
-    
+
     echo "source $install_path/bin/auxiliary_tools/pathfile"
     #4.create user on local node
     bash $OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh
@@ -520,7 +528,7 @@ function main()
     fi
     if [[ $ISSINGLE != "true" ]]
     then
-        env_check    
+        env_check
         if [[ $? != 0 ]]
         then
             return 1
@@ -544,11 +552,11 @@ function main()
     if [[ $? != 0 ]]
     then
         return 1
-    fi    
-    
+    fi
+
     if [[ "$ISSINGLE" != "true" ]]
     then
-            
+
         if [[ $UPGRADE == false ]]
         then
             #7.create openlkadmin user
@@ -570,7 +578,7 @@ function main()
     then
         return 1
     fi
-    
+
     install
     if [[ $? != 0 ]]
     then
@@ -580,7 +588,7 @@ function main()
     echo "[INFO] Installed openLooKeng cluster success. "
     echo "[INFO] Starting openLooKeng service now... "
     bash $OPENLOOKENG_BIN_PATH/start.sh
-    ret=$?   
+    ret=$?
     if [[ $ret == 0 ]]
     then
         echo "[INFO] Execute $OPENLOOKENG_BIN_PATH/stop.sh by user 'openlkadmin', to stop openLooKeng cluster."
