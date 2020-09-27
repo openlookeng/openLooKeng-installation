@@ -340,7 +340,7 @@ function create_user()
 
 }
 function java_check(){
-    bash $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --java
+    bash $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --java 0
 }
 function memory_check()
 {
