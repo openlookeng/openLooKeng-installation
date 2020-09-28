@@ -37,7 +37,7 @@ function main()
         fi
     fi
     . $OPENLOOKENG_BIN_THIRD_PATH/ask_node_config.sh false false
-    
+
     local_ips=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
     local_ips_array=($local_ips)
     if [[ -z ${PASSLESS_NODES[*]} ]]
@@ -49,13 +49,13 @@ function main()
     then
         ask_passwd
     fi
-    #1.stop server     
+    #1.stop server
     bash $OPENLOOKENG_BIN_PATH/stop.sh
-  
+
     INCLUDING=false
     for ip in ${host_array[@]}
     do
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             INCLUDING=true
         else
@@ -84,7 +84,7 @@ function main()
             fi
         else
             echo "[WARN]OpenLooKeng service wasn't installed on local node."
-        fi        
+        fi
     fi
     if [[ $? == 0 ]] #&& [[ $SERVERONLY != "true" ]]
     then

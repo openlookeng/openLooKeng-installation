@@ -154,7 +154,7 @@ function deploy_template_config(){
     IFS=',' read -ra host_array <<< "${PASSLESS_NODES}"
     for ip in ${host_array[@]}
     do
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             #rm -rf $etc_dir
             mkdir -p $etc_dir
@@ -265,7 +265,7 @@ function deploy_catalog()
     IFS=',' read -ra host_array <<< "$PASSLESS_NODES"
     for ip in ${host_array[@]}
     do
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             deployed_catalog=""
             for config_path in ${all_config}

@@ -69,7 +69,7 @@ function main()
     for ip in ${host_array[@]}
     do
         echo "[INFO] $command openLooKeng service on $ip..."
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             line=`cat $INSTALL_PATH/hetu-server/etc/node.properties|grep node.launcher-log-file`
             IFS='=' read -ra keyvalue <<< "${line}"

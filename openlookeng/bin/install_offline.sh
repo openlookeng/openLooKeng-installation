@@ -29,7 +29,7 @@ declare ALL_NODES=localhost
 declare TOTAL_MEM=`awk '/MemFree/ { printf "%d \n", $2/1024/1024 }' /proc/meminfo`
 declare JVM_MEM=`echo $((TOTAL_MEM*70/100))`
 declare local_ips=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
-export local_ips_array=($local_ips)
+declare local_ips_array=($local_ips)
 function print_help(){
     cat <<EOF
          NAME
@@ -66,7 +66,7 @@ function check_status()
 
     for ip in "${host_array[@]}"
     do
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             if [[ ! -d $INSTALL_PATH ]]
             then
@@ -127,7 +127,7 @@ function check_installation()
 
     for ip in "${host_array[@]}"
     do
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             if [[ ! -d $INSTALL_PATH ]]
             then
@@ -244,7 +244,7 @@ function change_user()
     IFS=',' read -ra host_array <<< "${ALL_NODES}"
     for ip in "${host_array[@]}"
     do
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             chown -R openlkadmin:openlkadmin $INSTALL_PATH
         else
@@ -269,7 +269,7 @@ function create_user()
     IFS=',' read -ra host_array <<< "${ALL_NODES}"
     for ip in "${host_array[@]}"
     do
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             #bash $OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh # will create user before
             continue
@@ -288,8 +288,8 @@ function memory_check()
     . $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --memory
 }
 
-function check_node_reacheable(){
-    bash $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --reacheable
+function check_node_reachable(){
+    . $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --reachable
 }
 
 function env_check()
@@ -482,7 +482,7 @@ function main()
     then
         return 1
     fi
-    check_node_reacheable
+    check_node_reachable
     #6.ask for root pass
     ask_passwd
     if [[ $? != 0 ]]

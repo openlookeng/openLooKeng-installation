@@ -16,8 +16,6 @@
 export wget_url=https://download.openlookeng.io
 shelldir=$(cd $(dirname $0); pwd)
 source ${shelldir}/auxiliary_tools/pathfile
-declare local_ips=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
-export local_ips_array=($local_ips)
 function print_help()
 {
     cat <<EOF

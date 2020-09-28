@@ -104,7 +104,7 @@ function java_install_check(){
     for ip in ${host_array[@]}
     do
         echo "[INFO] Check jdk installation on $ip..."
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             bash $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh $offline $resource_url_base
         else
@@ -131,14 +131,14 @@ function memory_check()
         return 1
     fi
 }
-function check_node_reacheable()
+function check_node_reachable()
 {
     if [[ ! -z $ALL_NODES ]]
     then
         IFS=',' read -ra host_array <<< "${ALL_NODES}"
         for ip in "${host_array[@]}"
         do
-            if [[ ! " ${local_ips_array[@]} " =~ " ${ip} " ]];then
+            if [[ *" ${ip} "* != " ${local_ips_array[@]} " ]] && [[ "${ip}" != "localhost" ]] ; then
                 ping -c3 -W3 ${ip}  >/dev/null 2>&1
                 if [ $? -eq 0 ]
                 then
@@ -197,9 +197,9 @@ function main()
         memory_check
         return $?
     fi
-    if [[ $1 =~ "reacheable" ]]
+    if [[ $1 =~ "reachable" ]]
     then
-        check_node_reacheable
+        check_node_reachable
         return $?
     fi
 

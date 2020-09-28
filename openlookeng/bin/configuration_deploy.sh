@@ -15,8 +15,6 @@
 #!/bin/bash
 shelldir=$(cd $(dirname $0); pwd)
 source ${shelldir}/auxiliary_tools/pathfile
-export local_ips=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
-export local_ips_array=($local_ips)
 whoami=`whoami`
 function init_config_template()
 {

@@ -17,7 +17,7 @@ export wget_url=https://download.openlookeng.io
 shelldir=$(cd $(dirname $0); pwd)
 source ${shelldir}/auxiliary_tools/pathfile
 declare local_ips=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
-export local_ips_array=($local_ips)
+declare local_ips_array=($local_ips)
 export ISSINGLE=false
 function print_help()
 {
@@ -44,7 +44,7 @@ function create_user()
     IFS=',' read -ra host_array <<< "${extend_ndodes}"
     for ip in "${host_array[@]}"
     do
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             bash $OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh
         else
@@ -64,7 +64,7 @@ function ask_passwd()
     . $OPENLOOKENG_BIN_THIRD_PATH/ask_password.sh
 }
 function java_check(){
-    bash $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --java
+    . $OPENLOOKENG_BIN_THIRD_PATH/env_check.sh --java
 }
 function install_server()
 {
@@ -100,7 +100,7 @@ function change_user()
     IFS=',' read -ra host_array <<< "${PASSLESS_NODES}"
     for ip in "${host_array[@]}"
     do
-        if [[ "${ip}" =~ "${local_ips_array[@]}" ]] || [[ "${ip}" == "localhost" ]]
+        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
         then
             chown -R openlkadmin:openlkadmin $INSTALL_PATH
         else
