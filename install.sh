@@ -424,11 +424,11 @@ function check_file()
 
 function read_versions()
 {
-    # TODO: Discover version(s) from download site
-    read -d '' -r -a version_arr < $install_path/versions
+    mapfile -t version_arr < <( curl -s $wget_url | egrep -o '010|[0-9]+\.[0-9]+\.[0-9]+' | sort -u )
+    
     if [[ -z $openlk_version ]]
     then
-        openlk_version=${version_arr[0]}
+        openlk_version=${version_arr[-1]}
     fi
 }
 

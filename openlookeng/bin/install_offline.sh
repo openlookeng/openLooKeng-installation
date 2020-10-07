@@ -235,7 +235,6 @@ function install()
 }
 function SshWithoutAuth(){
     chmod u+x $OPENLOOKENG_BIN_THIRD_PATH/passwordless.sh
-    export PASSLESS_NODES=${ALL_NODES}
     . $OPENLOOKENG_BIN_THIRD_PATH/passwordless.sh
 }
 
@@ -372,11 +371,11 @@ function check_file()
 
 function read_versions()
 {
-    # TODO: Discover downloaded version(s)
-    read -d '' -r -a version_arr < $install_path/versions
+    mapfile -t version_arr < <(find $install_path/resource/ -name "hetu-server-*" | egrep -o '010|[0-9]+\.[0-9]+\.[0-9]+' | sort -u)
+    
     if [[ -z $openlk_version ]]
     then
-        openlk_version=${version_arr[0]}
+        openlk_version=${version_arr[-1]}
     fi
 }
 
@@ -482,6 +481,7 @@ function main()
     then
         return 1
     fi
+    export PASSLESS_NODES=${ALL_NODES}
     check_node_reachable
     #6.ask for root pass
     ask_passwd
@@ -513,7 +513,7 @@ function main()
     then
         return 1
     fi
-
+    
     install
     if [[ $? != 0 ]]
     then
