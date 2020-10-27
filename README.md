@@ -9,7 +9,7 @@ In addition to the manual deployment of openLooKeng Sever, you can follow below 
 Deploying openLooKeng on a Single Node
 -------------------------------
 
-Execute below command can help you download the necessary packages and deploy openLooKeng server in one-click:
+Execute the command below can help you download the necessary packages and deploy openLooKeng server in one-click:
 
 ```shell
 bash <(wget -qO- https://download.openlookeng.io/install.sh)
@@ -21,15 +21,15 @@ or:
 wget -O - https://download.openlookeng.io/install.sh | bash
 ```
 
-Normally, you don\'t need to do any thing, except for the installation to complete. It will automatically start the service.
+Normally, you don\'t need to do anything, except for the installation to complete. It will automatically start the service.
 
-Execute below command to stop openLooKeng service.:
+Execute the command below to stop openLooKeng service.:
 
 ```shell
 /opt/openlookeng/bin/stop.sh
 ```
 
-Execute below command to start openLooKeng Command Line client:
+Execute the command below to start openLooKeng Command Line client:
 
 ```shell
 /opt/openlookeng/bin/openlk-cli
@@ -40,7 +40,7 @@ Execute below command to start openLooKeng Command Line client:
 Deploying openLooKeng to Cluster online
 --------------------------------
 
-Execute below command to install openLooKeng cluster:
+Execute the command below to install openLooKeng cluster:
 
 ```shell
 bash <(wget -qO- https://download.openlookeng.io/install.sh) -m
@@ -58,7 +58,7 @@ Besides, jdk version is required to be greater than 1.8.0\_151. If not, jdk1.8.0
 
 Secondly, the script will download openLooKeng-server tarball and copy that tarball to all the nodes in the cluster. Then install the openLooKeng-server by using this tarball.
 
-Lastly, the script will setup openLooKeng server with the standard configurations, includes configurations for JVM, Node and also for build-in catalogs like `tpch`, `tpcds`, `memory connector`.
+Lastly, the script will setup openLooKeng server with the standard configurations, including configurations for JVM, Node and also for build-in catalogs like `tpch`, `tpcds` and `memory connector`.
 
 By design, the script will check if there are existing configuration under directory:
 `/home/openlkadmin/.openlkadmin/cluster_node_info`
@@ -69,7 +69,7 @@ Optionally, you can add user `openlkadmin` and create a file `/home/openlkadmin/
 
 In the `cluster_node_info`,  you should list appropriate values for your cluster.
 
-Please refer to below template, and replace the variables denoted with brackets \<\> with actual values.
+Please refer to the template below, and replace the variables denoted with brackets \<\> with actual values.
 
 ``` properties
 COORDINATOR_IP=<master_node_ipaddress>
@@ -82,13 +82,13 @@ automatically and deployed to all nodes.
 
 Which means, alternatively, you can add those configuration files before running this deploy script, if you want to customized the deployment.
 
-If above process all succeed, the deploy script will automatically start the openLooKeng Service for you. Execute below command to stop openLooKeng service.:
+If above process all succeed, the deploy script will automatically start the openLooKeng Service for you. Execute the command below to stop openLooKeng service.:
 
 ```shell
 /opt/openlookeng/bin/stop.sh
 ```
 
-Execute below command to start openLooKeng Command Line client.:
+Execute the command below to start openLooKeng Command Line client.:
 
 ```shell
 /opt/openlookeng/bin/openlk-cli
@@ -106,7 +106,7 @@ or:
 
 
 
-For more help message,execute below command to deploy single node cluster:
+For more help message,execute the command below to deploy single node cluster:
     `bash <(wget -qO- https://download.openlookeng.io/install.sh) -h`     
 or:
     `bash <(wget -qO- https://download.openlookeng.io/install.sh) --help`
@@ -116,7 +116,7 @@ or:
 Upgrade openLooKeng Service
 --------------------
 
-Execute below command to Upgrade openLooKeng Service:
+Execute the command below to Upgrade openLooKeng Service:
 
 ```shell
 bash <(wget -qO- https://download.openlookeng.io/install.sh) -u <version>
@@ -124,7 +124,7 @@ bash <(wget -qO- https://download.openlookeng.io/install.sh) -u <version>
 
 This command will upgrade the current openLooKeng Service to target version,
 preserving all the existing configurations on current cluster. Execute
-below command to list all available versions:
+the command below to list all available versions:
 
 ```shell
 bash <(wget -qO- https://download.openlookeng.io/install.sh) -l
@@ -140,19 +140,19 @@ Deploying Configuration to openLooKeng Cluster
 ---------------------------------------
 
 Modify configuration file (/home/openlkadmin/.openlkadmin/cluster\_config\_info) and then
-execute below command to deploy the configurations to openLooKeng cluster:
+execute the command below to deploy the configurations to openLooKeng cluster:
 
 ```shell
 sh /opt/openlookeng/bin/configuration_deploy.sh
 ```
 
-Note, if you want to add more configrations or customize the configurations, you can add properties to the templates into file located at
+Note, if you want to add more configrations or customize the configurations, you can add properties to the templates into the file located at
 `/home/openlkadmin/.openlkadmin/.etc_template/coordinator` 
 
 or
 `/home/openlkadmin/.openlkadmin/.etc_template/worker`. 
 
-The property format has to be key=\<value\>, where value is wrapped with \'\<\' and \'\>\', which means it it a dynamic value. For example:
+The property format has to be key=\<value\>, where value is wrapped with \'\<\' and \'\>\', which means it is a dynamic value. For example:
 
 ``` properties
 http-server.http.port=<http-server.http.port>
@@ -169,7 +169,7 @@ exchange.client-threads=8
 Uninstall openLooKeng Service
 ----------------------
 
-It is very easy and straight forward to uninstall openLooKeng Service, simply run below command:
+It is very easy and straight forward to uninstall openLooKeng Service, simply run the command below:
 
 ```shell
 bash /opt/openlookeng/bin/uninstall.sh
@@ -185,13 +185,13 @@ Deploying openLooKeng to Cluster offline
 ---------------------------------
 
 If you can't access the download URL from the machine where you want to install openLooKeng, you can download offline tarball and unpack to /opt directory.
-Execute below command to deploy single node cluster:
+Execute the command below to deploy single node cluster:
 
 ```shell
 bash /opt/openlookeng/bin/install_offline.sh`
 ```
 
-Execute below command to deploy multi-node cluster:
+Execute the command below to deploy multi-node cluster:
 
 ```shell
 bash /opt/openlookeng/bin/install_offline.sh -m
@@ -202,7 +202,7 @@ or:
 bash /opt/openlookeng/bin/install_offline.sh --multi-node
 ```
 
-execute the below command to get help on all available options:
+execute the command below to get help on all available options:
 ```shell
 bash /opt/openlookeng/bin/install_offline.sh --help
 ```
@@ -210,7 +210,7 @@ bash /opt/openlookeng/bin/install_offline.sh --help
 Adding Node to Cluster 
 ----------------------
 
-If you want to add node to make the cluster bigger,execute the below command:
+If you want to add node to make the cluster bigger, execute the command below:
 
 ```shell
 bash /opt/openlookeng/bin/add_cluster_node.sh -n
@@ -231,12 +231,12 @@ or:
 bash /opt/openlookeng/bin/add_cluster_node.sh --file <add_nodes_file_path>
 ```
 
-If there are multiple nodes,separated by commas(,).
+If there are multiple nodes, separate them by commas(,).
 
 Removing Node to Cluster 
 ----------------------
 
-If you want to remove node to make the cluster smaller,execute the below command:
+If you want to remove node to make the cluster smaller, execute the command below:
 
 ```shell
 bash /opt/openlookeng/bin/remove_cluster_node.sh -n
