@@ -80,7 +80,7 @@ function install_server()
     for ip in ${host_array[@]}
     do
         echo "[INFO] Deploying package to $ip..."
-        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "$ip" == "localhost" ]]
+        if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "$ip" == "localhost" ]]
         then
 
             tar -zxvf $OEPNLKADMIN_PATH/hetu-server-$openlk_version.tar.gz -C $INSTALL_PATH &> /dev/null # local deploying

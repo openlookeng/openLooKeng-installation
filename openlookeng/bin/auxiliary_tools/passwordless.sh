@@ -34,9 +34,9 @@ function SshWithoutAuth(){
     IFS=',' read -ra host_array <<< "${PASSLESS_NODES}"
     for host in "${host_array[@]}"
     do
-            var=$(cat /home/openlkadmin/.ssh/id_rsa.pub) &> /dev/null
-            command="mkdir -p /home/openlkadmin/.ssh;echo $var >> /home/openlkadmin/.ssh/authorized_keys;chown openlkadmin:openlkadmin /home/openlkadmin/.ssh/authorized_keys;chmod 600 /home/openlkadmin/.ssh/authorized_keys;exit;"
-            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh "${host}" "${command}"
+        var=$(cat /home/openlkadmin/.ssh/id_rsa.pub) &> /dev/null
+        command="mkdir -p /home/openlkadmin/.ssh;echo $var >> /home/openlkadmin/.ssh/authorized_keys;chown -R openlkadmin:openlkadmin /home/openlkadmin/.ssh;chmod 600 /home/openlkadmin/.ssh/authorized_keys;exit;"
+        . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh "${host}" "${command}"
     done
 }
 SshWithoutAuth $@

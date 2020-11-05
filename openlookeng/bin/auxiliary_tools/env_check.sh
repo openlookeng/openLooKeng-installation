@@ -104,7 +104,7 @@ function java_install_check(){
     for ip in ${host_array[@]}
     do
         echo "[INFO] Check jdk installation on $ip..."
-        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
+        if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "${ip}" == "localhost" ]]
         then
             bash $OPENLOOKENG_BIN_THIRD_PATH/install_java.sh $offline $resource_url_base
         else
@@ -138,7 +138,7 @@ function check_node_reachable()
         IFS=',' read -ra host_array <<< "${ALL_NODES}"
         for ip in "${host_array[@]}"
         do
-            if [[ *" ${ip} "* != " ${local_ips_array[@]} " ]] && [[ "${ip}" != "localhost" ]] ; then
+            if [[ " ${local_ips_array[@]} " != *" ${ip} "*  ]] && [[ "${ip}" != "localhost" ]] ; then
                 ping -c3 -W3 ${ip}  >/dev/null 2>&1
                 if [ $? -eq 0 ]
                 then

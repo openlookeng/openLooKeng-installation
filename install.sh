@@ -65,7 +65,7 @@ function check_status()
 
     for ip in "${host_array[@]}"
     do
-        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
+        if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "${ip}" == "localhost" ]]
         then
             if [[ ! -d $INSTALL_PATH ]]
             then
@@ -126,7 +126,7 @@ function check_installation()
 
     for ip in "${host_array[@]}"
     do
-        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
+        if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "${ip}" == "localhost" ]]
         then
             if [[ ! -d $INSTALL_PATH ]]
             then
@@ -302,7 +302,7 @@ function change_user()
     IFS=',' read -ra host_array <<< "${ALL_NODES}"
     for ip in "${host_array[@]}"
     do
-        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
+        if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "${ip}" == "localhost" ]]
         then
             chown -R openlkadmin:openlkadmin $INSTALL_PATH
             chmod -R u+x $INSTALL_PATH/bin
@@ -328,7 +328,7 @@ function create_user()
     IFS=',' read -ra host_array <<< "${ALL_NODES}"
     for ip in "${host_array[@]}"
     do
-        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
+        if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "${ip}" == "localhost" ]]
         then
             #bash $OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh # will create user before
             continue
@@ -425,7 +425,7 @@ function check_file()
 function read_versions()
 {
     mapfile -t version_arr < <( curl -s $wget_url | egrep -o '010|[0-9]+\.[0-9]+\.[0-9]+' | sort -u )
-    
+
     if [[ -z $openlk_version ]]
     then
         openlk_version=${version_arr[-1]}

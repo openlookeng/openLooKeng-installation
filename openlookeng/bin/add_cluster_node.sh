@@ -44,7 +44,7 @@ function create_user()
     IFS=',' read -ra host_array <<< "${extend_ndodes}"
     for ip in "${host_array[@]}"
     do
-        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
+        if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "${ip}" == "localhost" ]]
         then
             bash $OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh
         else
@@ -100,7 +100,7 @@ function change_user()
     IFS=',' read -ra host_array <<< "${PASSLESS_NODES}"
     for ip in "${host_array[@]}"
     do
-        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
+        if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "${ip}" == "localhost" ]]
         then
             chown -R openlkadmin:openlkadmin $INSTALL_PATH
         else

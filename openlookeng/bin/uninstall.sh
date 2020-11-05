@@ -52,10 +52,15 @@ function main()
     #1.stop server
     bash $OPENLOOKENG_BIN_PATH/stop.sh
 
+    # Wait a bit for processed owned by "openlkadmin" to finish
+    if [[ $ISDELETEUSER == "true" ]]
+        sleep 3
+    fi
+
     INCLUDING=false
     for ip in ${host_array[@]}
     do
-        if [[ *" ${ip} "* == " ${local_ips_array[@]} " ]] || [[ "${ip}" == "localhost" ]]
+        if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "${ip}" == "localhost" ]]
         then
             INCLUDING=true
         else
