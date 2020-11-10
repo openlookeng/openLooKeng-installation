@@ -54,6 +54,7 @@ function main()
 
     # Wait a bit for processed owned by "openlkadmin" to finish
     if [[ $ISDELETEUSER == "true" ]]
+    then
         sleep 3
     fi
 
