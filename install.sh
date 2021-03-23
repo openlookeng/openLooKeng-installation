@@ -13,6 +13,7 @@
  # limitations under the License.
  ##
 #!/bin/bash
+export LANGUAGE=en
 export wget_url=https://download.openlookeng.io
 declare openlk_version=
 declare version_arr=
