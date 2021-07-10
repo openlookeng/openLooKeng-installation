@@ -40,6 +40,11 @@ function adduser()
     fi
     #pgrep -u openlkadmin | sudo xargs kill -9 &> /dev/null
     chown -R openlkadmin:openlkadmin /home/openlkadmin
+    #grep -n "openlkadmin" /etc/sudoers
+    #if [[ $? != 0 ]] ##bigger than 1.2
+    #then
+#        sed '$aopenlkadmin ALL = NOPASSWD: ALL' /etc/sudoers
+#    fi
     return $?
 }
 function main()

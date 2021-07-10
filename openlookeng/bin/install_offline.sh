@@ -246,9 +246,9 @@ function change_user()
         if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "${ip}" == "localhost" ]]
         then
             chown -R openlkadmin:openlkadmin $INSTALL_PATH
-			chmod -R openlkadmin:openlkadmin $INSTALL_PATH/hetu-server/bin
+			      chmod -R 755 $INSTALL_PATH/hetu-server/bin
         else
-            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "chown -R openlkadmin:openlkadmin $INSTALL_PATH;chmod -R openlkadmin:openlkadmin $INSTALL_PATH/hetu-server/bin"
+            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "chown -R openlkadmin:openlkadmin $INSTALL_PATH;chmod -R 755 $INSTALL_PATH/hetu-server/bin"
         fi
     done
     chown -R openlkadmin:openlkadmin $OEPNLKADMIN_PATH

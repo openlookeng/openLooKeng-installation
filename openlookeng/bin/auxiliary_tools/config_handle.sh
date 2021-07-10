@@ -152,6 +152,8 @@ function deploy_template_config(){
     fi
 
     IFS=',' read -ra host_array <<< "${PASSLESS_NODES}"
+    version=`awk -v num1=${openlk_version%.*} -v num2=1.2 'BEGIN{print(num1>num2)?"0":"1"}'`
+
     for ip in ${host_array[@]}
     do
         if [[ " ${local_ips_array[@]} " == *" ${ip} "* ]] || [[ "${ip}" == "localhost" ]]
@@ -165,6 +167,10 @@ function deploy_template_config(){
                 for config_path in ${all_config}
                 do
                     config_name=${config_path##*/}
+                    if [[ $version == 1 ]] && [[ $config_name == 'hetu-metastore.properties' ]] #less than 1.2
+                    then
+                        continue
+                    fi
                     cp -r $OEPNLKADMIN_PATH/.etc/coordinator/$config_name $etc_dir
                         deployed_file_cn="$deployed_file_cn,[$config_name]"
 
@@ -176,6 +182,10 @@ function deploy_template_config(){
                 for config_path in ${all_config}
                 do
                     config_name=${config_path##*/}
+                    if [[ $version == 1 ]] && [[ $config_name == 'hetu-metastore.properties' ]] ##less than 1.2
+                    then
+                        continue
+                    fi
                     cp -r $OEPNLKADMIN_PATH/.etc/worker/$config_name $etc_dir
                         deployed_file="$deployed_file,[$config_name]"
                 done
@@ -313,6 +323,13 @@ function addcatalog_mem()
     then
         touch $OEPNLKADMIN_PATH/catalog/memory.properties
         echo -e "connector.name=memory" > $OEPNLKADMIN_PATH/catalog/memory.properties
+    fi
+    currentversion=${openlk_version%.*}
+    version=`awk -v num1=$currentversion -v num2=1.2 'BEGIN{print(num1>num2)?"0":"1"}'`
+    grep -n "memory.spill-path" /home/openlkadmin/.openlkadmin/catalog/memory.properties
+    if [[ version == 0 && $? != 0 ]] ##bigger than 1.2
+    then
+        echo -e "memory.spill-path=/opt/openlookeng" >> $OEPNLKADMIN_PATH/catalog/memory.properties
     fi
 }
 function addcatalog_tpch()
