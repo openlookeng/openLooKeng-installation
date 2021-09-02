@@ -160,6 +160,7 @@ function download_cli()
     fi
     if [[ -z $offline ]]
     then
+	    echo "[INFO] DownLoad client from remote.$wget_url/$openlk_version/hetu-cli-$openlk_version-executable.jar"
         curl -fsSL -o $OPENLOOKENG_DEPENDENCIES_PATH/hetu-cli-$openlk_version-executable.jar $wget_url/$openlk_version/hetu-cli-$openlk_version-executable.jar
         if [[ $? == 0 ]]
         then

@@ -424,7 +424,7 @@ function check_file()
 
 function read_versions()
 {
-    mapfile -t version_arr < <( curl -s $wget_url | egrep -o '010|[0-9]+\.[0-9]+\.[0-9]+' | sort -u )
+    mapfile -t version_arr < <( curl -s -k $wget_url | egrep -o '010|^[0-9]+\.[0-9]+\.[0-9]+(-RC[0-9]+){0,1}' | sort -u )
 
     if [[ -z $openlk_version ]]
     then
@@ -501,6 +501,8 @@ function main()
         echo "[ERROR] Incorrect version."
         print_versions
         exit 1
+	else 
+	    echo "[INFO] Installing version is $openlk_version"
     fi
 
     #3.source pathfile
