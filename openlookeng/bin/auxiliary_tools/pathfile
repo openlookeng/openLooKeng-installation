@@ -13,7 +13,8 @@
  # limitations under the License.
  ##
 #bin/pathfile
-INSTALL_PATH=/opt/openlookeng
+homeuser=`echo ~`
+INSTALL_PATH=$homeuser/openlookeng
 OPENLOOKENG_DEPENDENCIES_PATH=$INSTALL_PATH/resource
 OEPNLKADMIN_PATH=/home/openlkadmin/.openlkadmin
 CLUSTER_CONFIG_INFO=$OEPNLKADMIN_PATH/cluster_config_info
