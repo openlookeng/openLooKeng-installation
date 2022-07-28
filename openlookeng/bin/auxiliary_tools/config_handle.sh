@@ -327,7 +327,7 @@ function addcatalog_mem()
     currentversion=${openlk_version%.*}
     version=`awk -v num1=$currentversion -v num2=1.2 'BEGIN{print(num1>num2)?"0":"1"}'`
     grep -n "memory.spill-path" /home/openlkadmin/.openlkadmin/catalog/memory.properties
-    if [[ version == 0 && $? != 0 ]] ##bigger than 1.2
+    if [[ $version == 0 && $? != 0 ]] ##bigger than 1.2
     then
         echo -e "memory.spill-path=/opt/openlookeng" >> $OEPNLKADMIN_PATH/catalog/memory.properties
     fi

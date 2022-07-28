@@ -24,16 +24,18 @@ function check_server()
     echo -n "waiting cluster to start..."
     i=0
     max_i=60
+    mapfile -t now_version_arr < <( curl -s $wget_url | egrep -o '010|[0-9]+\.[0-9]+\.[0-9]+' | sort -u )
+    now_version=${now_version_arr[-1]}
     while true
     do
         source /etc/profile
         source /home/openlkadmin/.*profile
-        java  -jar $OPENLOOKENG_DEPENDENCIES_PATH/hetu-cli-*-executable.jar  --server $COORDINATOR_IP:8090 --session "query_max_run_time=10s" --execute "select count(*) from system.runtime.nodes;" > /dev/null 2>&1
+        java  -jar $OPENLOOKENG_DEPENDENCIES_PATH/hetu-cli-$now_version-executable.jar  --server $COORDINATOR_IP:8090 --session "query_max_run_time=10s" --execute "select count(*) from system.runtime.nodes;" > /dev/null 2>&1
         #node=`echo ${nodes} | sed 's/\"//g'`
         ret=$?
         if [[ $ret == 0 ]]
         then
-            node_count=`java  -jar $OPENLOOKENG_DEPENDENCIES_PATH/hetu-cli-*-executable.jar  --server ${COORDINATOR_IP}:8090 --session "query_max_run_time=10s" --execute "select count(*) from system.runtime.nodes;"`
+            node_count=`java  -jar $OPENLOOKENG_DEPENDENCIES_PATH/hetu-cli-$now_version-executable.jar  --server ${COORDINATOR_IP}:8090 --session "query_max_run_time=10s" --execute "select count(*) from system.runtime.nodes;"`
             node_count=${node_count:1}
             node_count=${node_count%*\"}
         fi
