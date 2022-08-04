@@ -582,6 +582,9 @@ function main()
     fi
 
     install
+    sed -i "s/options.launcher_log_file/node_properties.get(\'node.launcher-log-file\' )/g " $install_path/hetu-server/bin/launcher.py
+    sed -i "s/options.server_log_file/node_properties.get(\'node.server-log-file\' )/g " $install_path/hetu-server/bin/launcher.py
+
     if [[ $? != 0 ]]
     then
         echo "[ERROR] openLooKeng installation failed."
