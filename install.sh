@@ -13,11 +13,21 @@
  # limitations under the License.
  ##
 #!/bin/bash
+
+userhome=`echo ~`
+echo $userhome
+mkdir -p $userhome/openlookeng
+if [[ $? != 0 ]]
+then
+    echo "home directory $userhome does not exist!"
+    exit 1
+fi
+
 export wget_url=https://download.openlookeng.io
 declare openlk_version=
 declare version_arr=
 declare package_name=openlookeng.tar.gz
-declare install_path=/opt/openlookeng
+declare install_path=/$userhome/openlookeng
 declare DEFAULT_MAX_SPLITS_PER_NODE_VALUE=100
 declare DEFAULT_MAX_PENDING_SPLITS_PER_TASK_VALUE=10
 declare CLUSTER_PASS
@@ -201,16 +211,16 @@ function download()
     URL="$wget_url/auto-install/$package_name"
     if type wget &>/dev/null
     then
-        echo "wget -O /opt/$package_name.sha256sum $URL.sha256sum"
-        wget -O /opt/$package_name.sha256sum $URL.sha256sum
-        echo "wget -O /opt/$package_name $URL"
-        wget -O /opt/$package_name $URL
+        echo "wget -O $userhome/$package_name.sha256sum $URL.sha256sum"
+        wget -O $userhome/$package_name.sha256sum $URL.sha256sum
+        echo "wget -O $userhome/$package_name $URL"
+        wget -O $userhome/$package_name $URL
     elif type curl &>/dev/null
     then
         #wget -P . "$URL"
-        curl -fsSL -o /opt/$package_name.sha256sum $URL.sha256sum
-        echo "curl -fsSL -o /opt/$package_name $URL"
-        curl -fsSL -o /opt/$package_name $URL
+        curl -fsSL -o $userhome/$package_name.sha256sum $URL.sha256sum
+        echo "curl -fsSL -o $userhome/$package_name $URL"
+        curl -fsSL -o $userhome/$package_name $URL
     fi
     # download failed
     if test $? -ne 0
@@ -223,7 +233,7 @@ function download()
 function verify_unpack()
 {
     #1.check package
-    cd /opt &> /dev/null
+    cd $userhome &> /dev/null
     echo "[INFO] Starting verification package..."
     res=$(sha256sum -c ${package_name}.sha256sum|grep OK|wc -l)
     if [[ $res > 0 ]]
@@ -236,8 +246,8 @@ function verify_unpack()
     fi
     #cd - &> /dev/null
     #2.extracting package
-    echo "[INFO] Extracting package ${package_name} to /opt ..."
-    tar -zxvf $package_name -C /opt &> /dev/null
+    echo "[INFO] Extracting package ${package_name} to $userhome ..."
+    tar -zxvf $package_name -C $userhome &> /dev/null
     if [[ $? != 0 ]]
     then
         exit 1
@@ -246,9 +256,9 @@ function verify_unpack()
     rm -rf ${package_name}
 }
 function clear_local(){
-    if [[ -d $install_path ]]
+    if [[ -d $userhome ]]
     then
-        rm -rf $install_path
+        rm -rf $userhome
     fi
 }
 function config_cluster()
@@ -333,8 +343,8 @@ function create_user()
             #bash $OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh # will create user before
             continue
         else
-            . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh /opt
-            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash /opt/hetu_adduser.sh;rm -rf /opt/hetu_adduser.sh;exit"
+            . $OPENLOOKENG_BIN_THIRD_PATH/cpresource_remote.sh $ip $OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh $userhome
+            . $OPENLOOKENG_BIN_THIRD_PATH/execute_remote.sh $ip "bash $userhome/hetu_adduser.sh;rm -rf $userhome/hetu_adduser.sh;exit"
         fi
     done
 
@@ -510,6 +520,7 @@ function main()
 
     echo "source $install_path/bin/auxiliary_tools/pathfile"
     #4.create user on local node
+    echo "$OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh"
     bash $OPENLOOKENG_BIN_THIRD_PATH/hetu_adduser.sh
     if [[ $? != 0 ]]
     then
